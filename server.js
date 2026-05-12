@@ -247,17 +247,21 @@ app.get('/api/stats', (req, res) => {
 });
 
 // ── START ─────────────────────────────────────────────────────────────────────
-server.listen(PORT, () => {
-  console.log('');
-  console.log('  ██████╗ ██╗   ██╗██╗     ███████╗███████╗');
-  console.log('  ██╔══██╗██║   ██║██║     ██╔════╝██╔════╝');
-  console.log('  ██████╔╝██║   ██║██║     ███████╗█████╗  ');
-  console.log('  ██╔═══╝ ██║   ██║██║     ╚════██║██╔══╝  ');
-  console.log('  ██║     ╚██████╔╝███████╗███████║███████╗');
-  console.log('  ╚═╝      ╚═════╝ ╚══════╝╚══════╝╚══════╝');
-  console.log('');
-  console.log(`  HTTP  → http://localhost:${PORT}`);
-  console.log(`  WS    → ws://localhost:${PORT}`);
-  console.log(`  API   → http://localhost:${PORT}/api`);
-  console.log('');
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log('');
+    console.log('  ██████╗ ██╗   ██╗██╗     ███████╗███████╗');
+    console.log('  ██╔══██╗██║   ██║██║     ██╔════╝██╔════╝');
+    console.log('  ██████╔╝██║   ██║██║     ███████╗█████╗  ');
+    console.log('  ██╔═══╝ ██║   ██║██║     ╚════██║██╔══╝  ');
+    console.log('  ██║     ╚██████╔╝███████╗███████║███████╗');
+    console.log('  ╚═╝      ╚═════╝ ╚══════╝╚══════╝╚══════╝');
+    console.log('');
+    console.log(`  HTTP  → http://localhost:${PORT}`);
+    console.log(`  WS    → ws://localhost:${PORT}`);
+    console.log(`  API   → http://localhost:${PORT}/api`);
+    console.log('');
+  });
+}
+
+module.exports = app;
