@@ -128,6 +128,7 @@ class PulseApp {
       this.feed.render();
       this.analytics.update(data.stats);
       this.playSound(data.notif.type);
+      this.showToast(data.notif);
       this.log(data.notif.type, data.notif.title, data.notif.event);
     });
 
@@ -253,6 +254,45 @@ class PulseApp {
       case 'danger': return 'text-error';
       default: return 'text-outline';
     }
+  }
+
+  showToast(n) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    const config = this.feed.getCardConfig(n.type);
+    
+    toast.className = `
+      pointer-events-auto bg-surface-container-lowest border border-outline-variant rounded-xl p-md soft-lift
+      flex items-center gap-md transform transition-all duration-500 translate-y-[-20px] opacity-0
+    `;
+    
+    toast.innerHTML = `
+      <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${config.iconBg}">
+        <span class="material-symbols-outlined text-[20px] ${config.iconColor}">${config.icon}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-label-md font-bold text-on-surface truncate">${n.title}</p>
+        <p class="text-body-sm text-on-surface-variant truncate">${n.message}</p>
+      </div>
+      <button class="text-outline hover:text-on-surface p-1" onclick="this.parentElement.remove()">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    `;
+
+    container.appendChild(toast);
+
+    // Animate in
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+    });
+
+    // Remove after 5 seconds
+    setTimeout(() => {
+      toast.classList.add('translate-y-[-20px]', 'opacity-0');
+      setTimeout(() => toast.remove(), 500);
+    }, 5000);
   }
 }
 
