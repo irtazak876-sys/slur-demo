@@ -70,6 +70,7 @@ class PulseApp {
 
     // Settings actions
     document.getElementById('btn-hard-clear').addEventListener('click', () => this.clearAllNotifications());
+    document.getElementById('btnReadAll').addEventListener('click', () => this.markAllAsRead());
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -109,7 +110,7 @@ class PulseApp {
       const label = document.getElementById('conn-status');
       
       if (status === 'connected') {
-        indicator.className = 'w-2 h-2 rounded-full bg-ok';
+        indicator.className = 'w-2 h-2 rounded-full bg-ok animate-pulse-custom';
         label.textContent = 'Online';
       } else {
         indicator.className = 'w-2 h-2 rounded-full bg-error';
@@ -179,6 +180,12 @@ class PulseApp {
   async markRead(id) {
     try {
       await fetch(`/api/notifications/${id}/read`, { method: 'PATCH' });
+    } catch (e) {}
+  }
+
+  async markAllAsRead() {
+    try {
+      await fetch('/api/notifications/read-all', { method: 'PATCH' });
     } catch (e) {}
   }
 

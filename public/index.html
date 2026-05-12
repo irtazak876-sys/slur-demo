@@ -113,6 +113,12 @@
     [v-cloak] { display: none; }
     .screen { display: none; }
     .screen.active { display: block; }
+@keyframes pulse-custom {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pulse-custom { animation: pulse-custom 2s infinite ease-in-out; }
   </style>
 </head>
 <body class="bg-surface text-on-surface flex flex-col">
@@ -153,6 +159,8 @@
         <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="info">System</button>
         <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="warn">Alerts</button>
         <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="danger">Critical</button>
+        <div class="flex-1"></div>
+        <button class="text-primary text-label-md font-semibold px-sm hover:underline whitespace-nowrap" id="btnReadAll">Mark all read</button>
       </div>
 
       <div class="px-margin-mobile py-md max-w-3xl mx-auto space-y-lg">
