@@ -63,15 +63,38 @@ class WSClient {
   }
 
   startPolling() {
-    this.status = 'connected'; // Show as connected for the demo
+    this.status = 'connected'; 
     this.emit('status_change', { status: 'connected' });
     
+    let lastSeenId = null;
+
     this.pollingInterval = setInterval(async () => {
       try {
         const res = await fetch('/api/notifications?limit=50');
         const data = await res.json();
         
-        // Emit a snapshot update
+        if (data.notifications && data.notifications.length > 0) {
+          const newest = data.notifications[0];
+          
+          // If we have a new notification that we haven't seen yet
+          if (lastSeenId && newest.id !== lastSeenId) {
+            // Find all notifications newer than lastSeenId
+            const newItems = [];
+            for (const n of data.notifications) {
+              if (n.id === lastSeenId) break;
+              newItems.push(n);
+            }
+            
+            // Emit new_notification for each (in reverse order to show oldest first)
+            newItems.reverse().forEach(notif => {
+              this.emit('new_notification', { notif, stats: data.stats });
+            });
+          }
+          
+          lastSeenId = newest.id;
+        }
+
+        // Always emit snapshot to keep UI in sync
         this.emit('snapshot', {
           type: 'snapshot',
           notifications: data.notifications,
@@ -81,7 +104,7 @@ class WSClient {
       } catch (e) {
         console.error('[poll] Failed to fetch updates:', e);
       }
-    }, 3000); // Poll every 3 seconds
+    }, 3000);
   }
 
   reconnect() {

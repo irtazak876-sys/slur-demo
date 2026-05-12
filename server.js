@@ -18,7 +18,11 @@ const NOTIF_FILE  = path.join(DATA_DIR, 'notifications.json');
 const MAX_STORED  = 500;   // max notifications kept in memory & on disk
 
 // ── SETUP ────────────────────────────────────────────────────────────────────
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+} catch (e) {
+  console.warn('[setup] Persistence disabled (read-only filesystem)');
+}
 
 const app    = express();
 const server = http.createServer(app);
@@ -52,9 +56,11 @@ function loadNotifications() {
 
 function saveNotifications() {
   try {
-    fs.writeFileSync(NOTIF_FILE, JSON.stringify(notifications, null, 2));
+    if (fs.existsSync(DATA_DIR)) {
+      fs.writeFileSync(NOTIF_FILE, JSON.stringify(notifications, null, 2));
+    }
   } catch (e) {
-    console.error('[store] Failed to save notifications:', e.message);
+    // Silently fail on read-only environments
   }
 }
 
