@@ -5,15 +5,19 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "vite:dev": "vite",
+    "vite:build": "vite build",
+    "vite:preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
-    "ws": "^8.17.0",
     "uuid": "^9.0.1",
-    "cors": "^2.8.5"
+    "ws": "^8.17.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "vite": "^8.0.12"
   }
 }

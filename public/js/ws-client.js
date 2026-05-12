@@ -3,7 +3,8 @@
  */
 class WSClient {
   constructor(url) {
-    this.url = url || `ws://${window.location.host}`;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    this.url = url || `${protocol}//${window.location.host}`;
     this.socket = null;
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 10;
