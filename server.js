@@ -26,7 +26,9 @@ const wss    = new WebSocket.Server({ server });
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+const DIST_PATH = path.join(__dirname, 'dist');
+const PUBLIC_PATH = fs.existsSync(DIST_PATH) ? DIST_PATH : path.join(__dirname, 'public');
+app.use(express.static(PUBLIC_PATH));
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let notifications = loadNotifications();
