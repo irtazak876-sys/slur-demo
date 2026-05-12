@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLUR — Instant Alert Hub</title>
+  
+  <!-- Tailwind CSS & Plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
+  <!-- Fonts: Inter & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            "surface":                    "#faf8ff",
+            "surface-dim":                "#d2d9f4",
+            "surface-bright":             "#faf8ff",
+            "surface-container-lowest":   "#ffffff",
+            "surface-container-low":      "#f2f3ff",
+            "surface-container":          "#eaedff",
+            "surface-container-high":     "#e2e7ff",
+            "surface-container-highest":  "#dae2fd",
+            "surface-variant":            "#dae2fd",
+            "surface-tint":               "#004ced",
+            "on-surface":                 "#131b2e",
+            "on-surface-variant":         "#434656",
+            "inverse-surface":            "#283044",
+            "inverse-on-surface":         "#eef0ff",
+            "background":                 "#faf8ff",
+            "on-background":              "#131b2e",
+            "outline":                    "#737688",
+            "outline-variant":            "#c3c5d9",
+            "primary":                    "#003ec7",
+            "on-primary":                 "#ffffff",
+            "primary-container":          "#0052ff",
+            "on-primary-container":       "#dfe3ff",
+            "inverse-primary":            "#b7c4ff",
+            "primary-fixed":              "#dde1ff",
+            "primary-fixed-dim":          "#b7c4ff",
+            "on-primary-fixed":           "#001452",
+            "on-primary-fixed-variant":   "#0038b6",
+            "secondary":                  "#505f76",
+            "on-secondary":               "#ffffff",
+            "secondary-container":        "#d0e1fb",
+            "on-secondary-container":     "#54647a",
+            "secondary-fixed":            "#d3e4fe",
+            "secondary-fixed-dim":        "#b7c8e1",
+            "on-secondary-fixed":         "#0b1c30",
+            "on-secondary-fixed-variant": "#38485d",
+            "tertiary":                   "#952200",
+            "on-tertiary":                "#ffffff",
+            "tertiary-container":         "#bf3003",
+            "on-tertiary-container":      "#ffddd5",
+            "tertiary-fixed":             "#ffdbd2",
+            "tertiary-fixed-dim":         "#ffb4a1",
+            "on-tertiary-fixed":          "#3c0800",
+            "on-tertiary-fixed-variant":  "#891e00",
+            "error":                      "#ba1a1a",
+            "on-error":                   "#ffffff",
+            "error-container":            "#ffdad6",
+            "on-error-container":         "#93000a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "sm":      "0.25rem",
+            "md":      "0.5rem",
+            "lg":      "0.5rem",
+            "xl":      "0.75rem",
+            "2xl":     "1rem",
+            "full":    "9999px"
+          },
+          spacing: {
+            "xs":             "4px",
+            "sm":             "8px",
+            "md":             "16px",
+            "lg":             "24px",
+            "xl":             "32px",
+            "base":           "4px",
+            "margin-mobile":  "16px",
+            "gutter-mobile":  "12px"
+          },
+          fontFamily: {
+            "sans": ["Inter", "sans-serif"],
+          },
+          fontSize: {
+            "body-sm":     ["14px", { "lineHeight": "20px", "letterSpacing": "0em",    "fontWeight": "400" }],
+            "body-md":     ["16px", { "lineHeight": "24px", "letterSpacing": "0em",    "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em","fontWeight": "600" }],
+            "label-md":    ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "label-xs":    ["10px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; min-height: max(884px, 100dvh); }
+    .soft-lift { box-shadow: 0px 1px 2px rgba(0,0,0,0.05), 0px 4px 6px rgba(0,0,0,0.03); }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    [v-cloak] { display: none; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col">
+
+  <!-- TOP APP BAR -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile h-14">
+    <div class="flex items-center gap-sm">
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">dataset</span>
+      <h1 class="text-headline-sm font-semibold text-primary uppercase tracking-tighter">SLUR</h1>
+    </div>
+    <div class="flex items-center gap-xs">
+      <div class="flex items-center gap-xs px-sm py-xs bg-surface-container rounded-full mr-sm">
+        <div class="w-2 h-2 rounded-full bg-ok" id="conn-indicator"></div>
+        <span class="text-label-md text-on-surface-variant" id="conn-status">Online</span>
+      </div>
+      <button class="p-base rounded-full hover:bg-surface-container-high transition-colors duration-200" id="soundToggleBtn">
+        <span class="material-symbols-outlined text-on-surface-variant" id="soundIcon">notifications_active</span>
+      </button>
+      <div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest border border-outline-variant">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed= Felix" alt="User" class="w-full h-full object-cover">
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 mt-14 mb-20 overflow-y-auto">
+    
+    <!-- SCREEN: NOTIFICATION CENTER -->
+    <div id="screen-inbox" class="screen active">
+      <!-- Filter Chips -->
+      <div class="sticky top-0 bg-surface z-40 px-margin-mobile py-sm flex gap-sm overflow-x-auto border-b border-surface-variant hide-scrollbar">
+        <button class="filter-chip active px-md py-xs rounded-full bg-primary-container text-on-primary text-label-md transition-all active:scale-95 whitespace-nowrap" data-filter="all">All</button>
+        <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="unread">Unread</button>
+        <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="ok">Success</button>
+        <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="info">System</button>
+        <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="warn">Alerts</button>
+        <button class="filter-chip px-md py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-md hover:bg-surface-container-highest transition-all active:scale-95 whitespace-nowrap" data-filter="danger">Critical</button>
+      </div>
+
+      <div class="px-margin-mobile py-md max-w-3xl mx-auto space-y-lg">
+        <!-- Search -->
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">search</span>
+          <input type="text" id="searchInput" class="w-full bg-surface-container border border-outline-variant rounded-lg pl-10 pr-md py-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Search signals...">
+        </div>
+
+        <!-- Groups -->
+        <div id="feed-container" class="space-y-lg">
+          <!-- Populated by JS -->
+          <div class="text-center py-xl text-outline">
+            <span class="material-symbols-outlined text-[48px] mb-md">satellite_alt</span>
+            <p class="text-body-md">Initializing secure uplink...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: ADMIN DASHBOARD (Producer + Stats) -->
+    <div id="screen-admin" class="screen">
+      <div class="px-margin-mobile py-lg max-w-5xl mx-auto w-full space-y-xl">
+        
+        <!-- Broadcast Section -->
+        <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg soft-lift">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md mb-lg">
+            <div>
+              <h2 class="text-headline-sm font-semibold text-on-surface">Signal Dispatch</h2>
+              <p class="text-body-sm text-on-surface-variant">Broadcast new alerts across the network.</p>
+            </div>
+            <button id="btn-custom" class="bg-primary text-on-primary px-lg py-sm rounded-lg text-label-md flex items-center gap-sm transition-all active:scale-95 hover:bg-on-primary-fixed-variant shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">send</span>
+              Dispatch Signal
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+            <button class="producer-btn group bg-surface-container-low border border-outline-variant rounded-xl p-md flex flex-col items-start gap-sm transition-all hover:border-primary active:scale-95" data-type="ok" data-event="order.shipped" data-title="Shipment Dispatched">
+              <div class="w-10 h-10 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <div class="text-left">
+                <p class="text-label-md font-semibold text-on-surface">Shipment</p>
+                <p class="text-label-xs text-on-surface-variant">order.shipped</p>
+              </div>
+            </button>
+            <button class="producer-btn group bg-surface-container-low border border-outline-variant rounded-xl p-md flex flex-col items-start gap-sm transition-all hover:border-primary active:scale-95" data-type="info" data-event="system.update" data-title="System Patch v4.2">
+              <div class="w-10 h-10 rounded-lg bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center">
+                <span class="material-symbols-outlined">system_update</span>
+              </div>
+              <div class="text-left">
+                <p class="text-label-md font-semibold text-on-surface">Update</p>
+                <p class="text-label-xs text-on-surface-variant">system.update</p>
+              </div>
+            </button>
+            <button class="producer-btn group bg-surface-container-low border border-outline-variant rounded-xl p-md flex flex-col items-start gap-sm transition-all hover:border-primary active:scale-95" data-type="warn" data-event="auth.retry" data-title="Failed Login Attempt">
+              <div class="w-10 h-10 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center">
+                <span class="material-symbols-outlined">warning</span>
+              </div>
+              <div class="text-left">
+                <p class="text-label-md font-semibold text-on-surface">Auth Alert</p>
+                <p class="text-label-xs text-on-surface-variant">auth.retry</p>
+              </div>
+            </button>
+            <button class="producer-btn group bg-surface-container-low border border-outline-variant rounded-xl p-md flex flex-col items-start gap-sm transition-all hover:border-primary active:scale-95" data-type="danger" data-event="security.breach" data-title="Unauthorized Access">
+              <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center">
+                <span class="material-symbols-outlined">lock</span>
+              </div>
+              <div class="text-left">
+                <p class="text-label-md font-semibold text-on-surface">Security</p>
+                <p class="text-label-xs text-on-surface-variant">security.breach</p>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-md" id="stats-grid">
+          <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex items-center gap-md soft-lift">
+            <div class="w-12 h-12 rounded-lg bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center">
+              <span class="material-symbols-outlined">send</span>
+            </div>
+            <div>
+              <p class="text-label-md text-on-surface-variant">Total Sent</p>
+              <p class="text-headline-sm font-bold text-on-surface" id="stat-total">0</p>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex items-center gap-md soft-lift">
+            <div class="w-12 h-12 rounded-lg bg-secondary-fixed text-on-secondary-fixed-variant flex items-center justify-center">
+              <span class="material-symbols-outlined">check_circle</span>
+            </div>
+            <div>
+              <p class="text-label-md text-on-surface-variant">Delivery</p>
+              <p class="text-headline-sm font-bold text-on-surface" id="stat-delivery">99.8%</p>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex items-center gap-md soft-lift">
+            <div class="w-12 h-12 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center">
+              <span class="material-symbols-outlined">group</span>
+            </div>
+            <div>
+              <p class="text-label-md text-on-surface-variant">Nodes</p>
+              <p class="text-headline-sm font-bold text-on-surface" id="stat-nodes">1</p>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex items-center gap-md soft-lift">
+            <div class="w-12 h-12 rounded-lg bg-error-container text-on-error-container flex items-center justify-center">
+              <span class="material-symbols-outlined">bolt</span>
+            </div>
+            <div>
+              <p class="text-label-md text-on-surface-variant">Rate</p>
+              <p class="text-headline-sm font-bold text-on-surface" id="stat-eps">0.0</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Feed (Log) -->
+        <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg soft-lift">
+          <div class="flex justify-between items-center mb-md">
+            <h2 class="text-label-xs font-bold text-outline uppercase tracking-widest">Protocol Audit Log</h2>
+            <button class="text-primary text-label-md font-semibold hover:underline" id="btnClearLog">Clear Log</button>
+          </div>
+          <div id="log-stream" class="space-y-sm max-h-[300px] overflow-y-auto pr-sm">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- SCREEN: ACTIVITY FEED -->
+    <div id="screen-activity" class="screen">
+       <div class="px-margin-mobile py-md max-w-3xl mx-auto space-y-lg">
+          <div class="text-label-xs font-bold text-outline uppercase tracking-widest px-xs">System Activity</div>
+          <div id="activity-timeline" class="space-y-0">
+             <!-- Populated by JS -->
+          </div>
+       </div>
+    </div>
+
+    <!-- SCREEN: SETTINGS -->
+    <div id="screen-settings" class="screen">
+       <div class="px-margin-mobile py-md max-w-3xl mx-auto">
+          <div class="text-label-xs font-bold text-outline uppercase tracking-widest px-xs mb-md">Preferences</div>
+          <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden divide-y divide-outline-variant">
+             <div class="flex items-center justify-between p-md">
+                <div>
+                   <p class="text-body-sm font-medium text-on-surface">Critical Alerts</p>
+                   <p class="text-label-md text-on-surface-variant">Bypass silent mode for security signals.</p>
+                </div>
+                <div class="bg-primary rounded-full w-10 h-6 relative cursor-pointer">
+                   <div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                </div>
+             </div>
+             <div class="flex items-center justify-between p-md">
+                <div>
+                   <p class="text-body-sm font-medium text-on-surface">Push Notifications</p>
+                   <p class="text-label-md text-on-surface-variant">Receive instant updates on your device.</p>
+                </div>
+                <div class="bg-primary rounded-full w-10 h-6 relative cursor-pointer">
+                   <div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                </div>
+             </div>
+             <div class="flex items-center justify-between p-md">
+                <div>
+                   <p class="text-body-sm font-medium text-on-surface">Data Retention</p>
+                   <p class="text-label-md text-on-surface-variant">Store signals locally for up to 30 days.</p>
+                </div>
+                <button class="text-primary text-label-md font-semibold">Change</button>
+             </div>
+          </div>
+          
+          <div class="mt-xl text-center">
+             <button class="text-error text-label-md font-label-md px-md py-sm rounded-lg border border-error-container hover:bg-error-container transition-all" id="btn-hard-clear">
+                Wipe Local Signal Cache
+             </button>
+          </div>
+       </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM NAV BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-surface-container border-t border-outline-variant flex justify-around items-center h-16 px-md z-50">
+    <button class="nav-item active flex flex-col items-center gap-xs text-primary" data-screen="inbox">
+      <div class="bg-secondary-container rounded-full px-lg py-xs">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inbox</span>
+      </div>
+      <span class="text-label-xs font-bold">Signals</span>
+    </button>
+    <button class="nav-item flex flex-col items-center gap-xs text-on-surface-variant" data-screen="admin">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="text-label-xs font-bold">Dispatch</span>
+    </button>
+    <button class="nav-item flex flex-col items-center gap-xs text-on-surface-variant" data-screen="activity">
+      <span class="material-symbols-outlined">timeline</span>
+      <span class="text-label-xs font-bold">Activity</span>
+    </button>
+    <button class="nav-item flex flex-col items-center gap-xs text-on-surface-variant" data-screen="settings">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="text-label-xs font-bold">System</span>
+    </button>
+  </nav>
+
+  <!-- SCRIPTS -->
+  <script src="/js/ws-client.js"></script>
+  <script src="/js/analytics.js"></script>
+  <script src="/js/feed.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
